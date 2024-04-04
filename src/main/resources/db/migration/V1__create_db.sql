@@ -1,0 +1,27 @@
+CREATE TABLE client (
+id BIGINT AUTO_INCREMENT,
+name VARCHAR NOT NULL  CHECK( CHAR_LENGTH (name) >=3 AND CHAR_LENGTH (name) <=200  ),
+PRIMARY KEY (id)
+);
+
+
+CREATE TABLE planet (
+id VARCHAR NOT NULL CHECK (UPPER (id) = id),
+name VARCHAR NOT NULL  CHECK( CHAR_LENGTH (name) >=1 AND CHAR_LENGTH (name) <=500  ),
+PRIMARY KEY (ID)
+);
+
+
+
+CREATE TABLE ticket (
+id BIGINT AUTO_INCREMENT ,
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+client_id BIGINT NOT NULL ,
+from_planet_id VARCHAR NOT NULL ,
+to_planet_id VARCHAR NOT NULL ,
+
+PRIMARY KEY (id),
+FOREIGN KEY(client_id) REFERENCES client(id),
+FOREIGN KEY(from_planet_id) REFERENCES planet(id),
+FOREIGN KEY(to_planet_id) REFERENCES planet(id)
+);
