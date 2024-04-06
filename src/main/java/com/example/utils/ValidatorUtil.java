@@ -2,6 +2,7 @@ package com.example.utils;
 
 import com.example.model.Client;
 import com.example.model.Planet;
+import com.example.model.Ticket;
 
 public class ValidatorUtil {
     public static boolean validate(Planet planet){
@@ -14,4 +15,12 @@ public class ValidatorUtil {
     public static boolean validate(String planetId){
         return  planetId.equals(planetId.toUpperCase());
     }
+    public static boolean validate(Ticket ticket){
+        return validate(ticket.getClient())&&
+                validate(ticket.getPlanetTo())&&
+                validate(ticket.getPlanetFrom());
+    }
+
+
+
 }

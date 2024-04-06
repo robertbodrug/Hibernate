@@ -1,6 +1,6 @@
 package com.example.dao;
 
-import com.example.model.Client;
+import com.example.model.Ticket;
 import com.example.utils.HibernateUtil;
 import com.example.utils.ValidatorUtil;
 import org.hibernate.Session;
@@ -9,43 +9,40 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-public class ClientDao {
+public class TicketDao {
     private  final SessionFactory sessionFactory = HibernateUtil.getInstance().getSessionFactory();
-    private static final String GET_ALL_CLIENTS_QUERY = "FROM Client";
-    //"SELECT id,name FROM client"
-    public  boolean create(Client client) throws RuntimeException {
+    private static final String GET_ALL_TICKETS_QUERY = "FROM Ticket";
+    //"SELECT id,name FROM ticket"
+    public  boolean createTicket(Ticket ticket) throws RuntimeException {
 
-        if(ValidatorUtil.validate(client)) {
+        if(ValidatorUtil.validate(ticket)) {
             try(Session session = sessionFactory.openSession();){
                 Transaction transaction = session.beginTransaction();
-                session.persist(client);
+                session.persist(ticket);
                 transaction.commit();
                 return true;
             }
         }else {
-            throw new RuntimeException("Invalid name for client");
+            throw new RuntimeException("Invalid data for ticket");
         }
     }
-    public  boolean createByName(String name) throws RuntimeException {
-        return  create(new Client(name));
-    }
-    public  Client getClientById(Long id) throws RuntimeException {
+
+    public  Ticket getTicketById(Long id) throws RuntimeException {
         if(id>0) {
             try(Session session = sessionFactory.openSession();){
-                Client client = session.get(Client.class, id);
-                client.getTickets().forEach(System.out::println);
-                return client;
+                Ticket ticket = session.get(Ticket.class, id);
+                return ticket;
             }
         }else {
             throw new RuntimeException("Invalid id for client");
         }
     }
 
-    public  boolean updateClient(Client client) throws RuntimeException {
-        if(ValidatorUtil.validate(client)) {
+    public  boolean updateTicket(Ticket ticket) throws RuntimeException {
+        if(ValidatorUtil.validate(ticket)) {
             try(Session session = sessionFactory.openSession();){
                 Transaction transaction = session.beginTransaction();
-                session.merge(client);
+                session.merge(ticket);
                 transaction.commit();
                 return true;
             }
@@ -53,12 +50,11 @@ public class ClientDao {
             throw new RuntimeException("Invalid client");
         }
     }
-    public  boolean deleteById(Long id) throws RuntimeException {
-        if(id>0) {
+    public  boolean deleteTicket(Ticket ticket) throws RuntimeException {
+        if(ValidatorUtil.validate(ticket)) {
             try(Session session = sessionFactory.openSession();){
                 Transaction transaction = session.beginTransaction();
-                Client clientById = getClientById(id);
-                session.remove(clientById);
+                session.remove(ticket);
                 transaction.commit();
                 return true;
             }
@@ -67,12 +63,19 @@ public class ClientDao {
         }
 
     }
+    public  boolean deleteTicketById(Long id) throws RuntimeException {
+        if(id>0){
+            Ticket ticketById = getTicketById(id);
+            return deleteTicket(ticketById);
+        }else {
+            throw new RuntimeException("Invalid id");
+        }
 
-    public List<Client> listAll(){
+    }
+
+    public List<Ticket> listAll(){
         try(Session session = sessionFactory.openSession();){
-            List<Client> list = session.createQuery(GET_ALL_CLIENTS_QUERY, Client.class).list();
-            list.stream().map(Client::getTickets).forEach(System.out::println);
-            return list;
+            return session.createQuery(GET_ALL_TICKETS_QUERY,Ticket.class).list();
         }
     }
 }
